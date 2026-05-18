@@ -61,6 +61,6 @@ def build_summary(data: dict, lang: str = "en") -> str:
             else:
                 val = t(f"opt_{val}", lang)
         value = html.escape(str(val))
-        lines.append(f"🔹 <b>{label}:</b> {value}")
+        lines.append(f"🔹 <b>{label}:</b> <i>\"{value}\"</i>")
         
     return "\n".join(lines)
