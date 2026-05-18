@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: taxifair-bot
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python render_app.py
+    envVars:
+      - key: BOT_TOKEN
+        sync: false
+      - key: ADMIN_ID
+        sync: false
+      - key: SPREADSHEET_ID
+        sync: false
+      - key: SUMMARY_SPREADSHEET_ID
+        sync: false
+      - key: GOOGLE_CREDENTIALS_JSON
+        sync: false
+      - key: PYTHON_VERSION
+        value: "3.11.9"
