@@ -48,7 +48,18 @@ def build_summary(data: dict, lang: str = "en") -> str:
         label = t(question.label, lang)
         val = data.get(question.id, "—")
         if isinstance(question.options, list) and val in question.options:
-            val = t(f"opt_{val}", lang)
+            if val == "12:00 - 12:15 LT":
+                val = t("opt_12_15", lang)
+            elif val == "12:15 - 12:30 LT":
+                val = t("opt_12_30", lang)
+            elif val == "12:45 - 1:00 LT":
+                val = t("opt_1_00", lang)
+            elif val == "Monday to Friday":
+                val = t("opt_mon_fri", lang)
+            elif val == "Monday to Saturday":
+                val = t("opt_mon_sat", lang)
+            else:
+                val = t(f"opt_{val}", lang)
         value = html.escape(str(val))
         lines.append(f"🔹 <b>{label}:</b> {value}")
         
