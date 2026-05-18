@@ -33,6 +33,9 @@ class HealthCheckHandler(tornado.web.RequestHandler):
         self.set_status(200)
         self.write("TaxiFair Bot is running ✅")
 
+    def head(self):
+        self.set_status(200)
+
 
 class TelegramWebhookHandler(tornado.web.RequestHandler):
     """POST /<BOT_TOKEN> — Receives updates from Telegram."""
