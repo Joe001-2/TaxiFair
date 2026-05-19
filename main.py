@@ -1,6 +1,7 @@
 import logging
 import asyncio
 from telegram.ext import (
+    Application,
     ApplicationBuilder,
     CommandHandler,
     ConversationHandler,
@@ -31,15 +32,19 @@ if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 
-async def run_bot() -> None:
-    # ── Connect to Google Sheets ─────────────────────────────
+def connect_sheets() -> None:
+    """Connect to Google Sheets."""
     logger.info("Connecting to Google Sheets...")
     try:
         sheets_service.connect()
         logger.info("Google Sheets connected successfully.")
     except Exception as e:
         logger.error("Failed to connect to Google Sheets: %s", e)
+        raise e
 
+
+def create_application() -> Application:
+    """Create and configure the python-telegram-bot application."""
     # ── Build the application ────────────────────────────────
     app = (
         ApplicationBuilder()
@@ -80,6 +85,17 @@ async def run_bot() -> None:
     app.add_handler(CommandHandler("export", export_command))
     app.add_handler(CommandHandler("all", all_command))
     app.add_handler(CommandHandler("help", help_command))
+
+    return app
+
+
+async def run_bot() -> None:
+    """Run the bot in polling mode (local development)."""
+    # ── Connect to Google Sheets ─────────────────────────────
+    connect_sheets()
+
+    # ── Build and configure application ──────────────────────
+    app = create_application()
 
     # ── Start polling ────────────────────────────────────────
     logger.info("Bot is starting... Press Ctrl+C to stop.")
