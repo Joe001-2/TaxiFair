@@ -41,6 +41,7 @@ REGISTRATION_FIELD_MAP = {
     "telegram_user_id": "Telegram User ID",
     "contact_phone": "Phone Number",
     "block_number": "Block Number",
+    "house_number": "House Number",
     "destination": "Destination",
     "morning_departure_time": "Morning Time",
     "evening_pickup_time": "Evening Time",
@@ -120,8 +121,12 @@ class GoogleSheetsService:
                 logger.info("Created tab '%s' with headers.", tab_name)
             else:
                 ws = self._spreadsheet.worksheet(tab_name)
-                if not ws.row_values(1):
+                first_row = ws.row_values(1)
+                if not first_row:
                     ws.append_row(headers, value_input_option="RAW")
+                elif first_row != headers:
+                    ws.update("A1", [headers])
+                    logger.info("Updated headers in existing tab '%s' to be in sync.", tab_name)
 
         summary_existing = {ws.title for ws in self._summary_spreadsheet.worksheets()}
         if "Summarized" not in summary_existing:

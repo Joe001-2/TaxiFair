@@ -32,6 +32,7 @@ def generate_excel_report(records: List[Dict[str, Any]]) -> io.BytesIO:
             "telegram_user_id": "Telegram User ID",
             "contact_phone": "Phone Number",
             "block_number": "Block Number",
+            "house_number": "House Number",
             "destination": "Destination",
             "morning_departure_time": "Morning Time",
             "evening_pickup_time": "Evening Time",

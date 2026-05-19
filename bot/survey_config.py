@@ -19,6 +19,13 @@ TRANSPORT_SURVEY = Survey(
             validator=validate_block_number
         ),
         Question(
+            id="house_number",
+            label="lbl_house",
+            text="q_house",
+            type="text",
+            validator=validate_house_number
+        ),
+        Question(
             id="full_name",
             label="lbl_name",
             text="q_name",
