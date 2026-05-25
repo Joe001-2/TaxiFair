@@ -16,7 +16,7 @@ if project_root not in sys.path:
 from telegram import Update
 from telegram.ext import ContextTypes, ConversationHandler
 from bot.states.survey_states import ASKING_QUESTIONS, CONFIRMATION
-from bot.keyboards.reply_keyboards import contact_keyboard, remove_keyboard
+from bot.keyboards.reply_keyboards import contact_keyboard, remove_keyboard, skip_keyboard
 from bot.keyboards.inline_keyboards import (
     dynamic_choice_keyboard, confirmation_keyboard,
 )
@@ -67,6 +67,8 @@ async def ask_question(update: Update, context: ContextTypes.DEFAULT_TYPE) -> in
         keyboard = contact_keyboard(lang)
     elif question.type == "choice" and question.options:
         keyboard = dynamic_choice_keyboard(question.options, lang, prefix=f"q{idx}")
+    elif question.skippable:
+        keyboard = skip_keyboard(lang)
 
     if update.callback_query:
         await update.callback_query.message.reply_text(q_text, parse_mode="HTML", reply_markup=keyboard)
@@ -84,14 +86,10 @@ async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     lang = context.user_data.get("language", "en")
     
     answer = None
-    if question.type == "contact":
-        if not update.message.contact:
-            await update.message.reply_text(
-                t('err_contact', lang),
-                parse_mode="HTML", reply_markup=contact_keyboard(lang),
-            )
-            return ASKING_QUESTIONS
-        answer = update.message.contact.phone_number
+    
+    # Check if user clicked skip button
+    if question.skippable and update.message and update.message.text == t("btn_skip", lang):
+        answer = ""  # Empty string indicates skipped
     elif question.type == "choice":
         if not update.callback_query:
             await update.message.reply_text(t('err_buttons', lang))
@@ -106,17 +104,18 @@ async def handle_answer(update: Update, context: ContextTypes.DEFAULT_TYPE) -> i
     else:
         answer = update.message.text or ""
 
-    # Validation
-    if question.validator:
-        ok, result = question.validator(answer, lang)
-        if not ok:
-            # result might contain HTML, so use parse_mode="HTML"
-            if update.callback_query:
-                await update.callback_query.message.reply_text(result, parse_mode="HTML")
-            else:
-                await update.message.reply_text(result, parse_mode="HTML")
-            return ASKING_QUESTIONS
-        answer = result
+    # Validation (skip validation if answer is empty and question is skippable)
+    if not (question.skippable and answer == ""):
+        if question.validator:
+            ok, result = question.validator(answer, lang)
+            if not ok:
+                # result might contain HTML, so use parse_mode="HTML"
+                if update.callback_query:
+                    await update.callback_query.message.reply_text(result, parse_mode="HTML")
+                else:
+                    await update.message.reply_text(result, parse_mode="HTML")
+                return ASKING_QUESTIONS
+            answer = result
 
     # Save answer
     context.user_data[question.id] = answer

@@ -10,6 +10,7 @@ class Question:
     options: Any = None
     validator: Optional[Callable[[str], tuple[bool, str]]] = None
     keyboard_type: str = "none"  # "reply", "inline", "none"
+    skippable: bool = False  # Whether this question can be skipped
 
 @dataclass
 class Survey:

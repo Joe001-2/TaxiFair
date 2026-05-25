@@ -30,6 +30,16 @@ def validate_house_number(text: str, lang: str = "en") -> tuple[bool, str]:
     return True, text
 
 
+def validate_phone_number(text: str, lang: str = "en") -> tuple[bool, str]:
+    """Phone number must contain at least 7 digits."""
+    text = text.strip()
+    # Extract digits only
+    digits = ''.join(filter(str.isdigit, text))
+    if len(digits) < 7:
+        return False, t('val_phone', lang)
+    return True, text
+
+
 def validate_household_count(text: str, lang: str = "en") -> tuple[bool, str]:
     """Must be a positive integer."""
     text = text.strip()

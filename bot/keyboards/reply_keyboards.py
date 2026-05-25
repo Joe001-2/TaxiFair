@@ -14,6 +14,12 @@ def contact_keyboard(lang: str = "en") -> ReplyKeyboardMarkup:
     return ReplyKeyboardMarkup([[btn]], resize_keyboard=True, one_time_keyboard=True)
 
 
+def skip_keyboard(lang: str = "en") -> ReplyKeyboardMarkup:
+    """Keyboard with a Skip button for optional questions."""
+    btn = KeyboardButton(text=t("btn_skip", lang))
+    return ReplyKeyboardMarkup([[btn]], resize_keyboard=True, one_time_keyboard=True)
+
+
 def cancel_keyboard(lang: str = "en") -> ReplyKeyboardMarkup:
     """Simple keyboard with Cancel and Restart options."""
     return ReplyKeyboardMarkup(

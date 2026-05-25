@@ -3,7 +3,7 @@ from services.validators import (
     validate_full_name, validate_block_number,
     validate_house_number, validate_household_count,
     validate_destination, validate_morning_time,
-    validate_evening_time, validate_frequency
+    validate_evening_time, validate_frequency, validate_phone_number
 )
 from config import DESTINATIONS, MORNING_SLOTS, FREQUENCY_OPTIONS
 
@@ -23,7 +23,8 @@ TRANSPORT_SURVEY = Survey(
             label="lbl_house",
             text="q_house",
             type="text",
-            validator=validate_house_number
+            validator=validate_house_number,
+            skippable=True
         ),
         Question(
             id="full_name",
@@ -36,8 +37,8 @@ TRANSPORT_SURVEY = Survey(
             id="contact_phone",
             label="lbl_phone",
             text="q_phone",
-            type="contact",
-            keyboard_type="reply"
+            type="text",
+            validator=validate_phone_number
         ),
         Question(
             id="destination",
